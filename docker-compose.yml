@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  dicom-app:
+    build: .
+    container_name: xamednas_dicom_service
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - /volume1/medical_storage:/data/dicom_inbound
+      - ./db:/app/db
+    environment:
+      - STORAGE_PATH=/data/dicom_inbound
+      - PORT=8080

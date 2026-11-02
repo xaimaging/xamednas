@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>XAMedNAS Local DICOM Viewer</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        h1 { color: #38bdf8; font-size: 1.5rem; }
+        .grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; margin-top: 20px; }
+        .card { background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #334155; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #334155; }
+        th { color: #94a3b8; }
+        .badge { background: #0284c7; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <h1>🏥 XAMedNAS - Local DICOM Server (UGREEN AI NAS)</h1>
+    <p>Local viewing and organization of medical studies within the clinic and/or medical office network.</p>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Storage Status</h3>
+            <button onclick="scanFiles()" style="background: #0284c7; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer;">Scan NAS</button>
+            <div id="status" style="margin-top: 15px;">Waiting for scan...</div>
+        </div>
+        <div class="card">
+            <h3>Identified Clinical Studies</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patienet ID</th>
+                        <th>Modality</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="dicom-list">
+                    <tr><td colspan="4" style="text-align: center;">No studies have been uploaded.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function scanFiles() {
+            document.getElementById('status').innerText = 'Scanning NAS volumes...';
+            try {
+                const res = await fetch('/api/v1/scan');
+                const json = await res.json();
+                document.getElementById('status').innerText = `Procesados: ${json.count} archivos DICOM.`;
+                
+                const tbody = document.getElementById('dicom-list');
+                tbody.innerHTML = '';
+                json.data.forEach(item => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${item.patient_id}</td>
+                            <td><span class="badge">${item.modality}</span></td>
+                            <td>${item.study_description}</td>
+                            <td>${item.study_date}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                document.getElementById('status').innerText = 'Connection error with the NAS.';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "id": "com.xamednas.dicom.viewer",
+  "name": "MedNAS DICOM Viewer & AI",
+  "version": "1.0.0",
+  "description": "DICOM medical image server and web viewer for local networks, featuring AI-based semantic metadata extraction.",
+  "developer": "anthuafer",
+  "category": "Productivity",
+  "icon": "icon.png",
+  "entrypoint": "http://localhost:8080",
+  "permissions": [
+    "storage:read",
+    "storage:write",
+    "network:local"
+  ]
+}
